@@ -16,8 +16,13 @@ html
                             td= key
                 tbody 
                     each book in Books 
-                        tr(href='http://localhost:3000/book' + "#{book.ISBN}")
+                         tr(onClick=`redirect(${book.ISBN})`)
                             each value in book 
                                 td= value 
         else 
             p hej
+
+      script. 
+        function redirect(ISBN) {
+          window.location = `/book/${ISBN}`
+        }
