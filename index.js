@@ -1,5 +1,6 @@
 const express = require('express')
 const sql = require('mssql')
+const path = require('path')
 
 require('dotenv').config()
 
@@ -16,17 +17,20 @@ const connectionset = {
 
 app.get('/', async (req, res) => {
   try {
-    /*const query = `
-    select 
-      Title 
-    from 
-     books
-      `*/
+
     const connection = await sql.connect(connectionset)
     const result = await connection.request()
-      .query('select * from Books')
+      .query(`
+          select 
+            ISBN,
+            Title,
+            FirstName + ' ' + LastName as 'Author',
+            Price
+          from 
+            Books,
+            Authors
+            `)
 
-    //res.json(result);
     res.render('index.pug', { Books: result.recordset });
     console.log(query);
 
@@ -37,9 +41,37 @@ app.get('/', async (req, res) => {
 
 })
 
-/*app.get('/', (req, res) => {
-  res.render("index");
-})*/
+app.get('/book/:ISBN', async (req, res) => {
+  try {
+    const query = `
+          select 
+            ISBN,
+            Title,
+          
+            Price
+          from 
+            Books
+          
+          where 
+            Books.ISBN = @ISBN
+            `
+
+    const connection = await sql.connect(connectionset)
+    const result = await connection.request()
+      .input('ISBN', sql.NVarChar, req.params.ISBN)
+      .query(query)
+    //res.send(req.params.ISBN)
+    //res.json(result)
+
+    res.render('book.pug', { Books: result.recordset });
+    console.log(query);
+  }
+  catch (ex) {
+    console.log(ex)
+  }
+})
+
+
 
 app.listen(3000, () => {
   console.log('welcome')
