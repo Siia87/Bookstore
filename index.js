@@ -44,16 +44,27 @@ app.get('/', async (req, res) => {
 app.get('/book/:ISBN', async (req, res) => {
   try {
     const query = `
-          select 
-            ISBN,
+     select
+            Books.ISBN,
             Title,
-          
-            Price
-          from 
+			      Language.Name as 'Language',
+            Price,
+		      	FirstName + ' ' + LastName as 'Author',
+				Rating.Rating
+
+          from
             Books
-          
-          where 
-            Books.ISBN = @ISBN
+
+		join Rating
+			ON Books.RatingID = Rating.ID
+        join language
+          ON Books.languageID = language.[639-1]
+	  	  Join AuthorsBooks
+          ON Books.ISBN = AuthorsBooks.ISBN
+	  	  Join Authors
+          ON Authors.ID = AuthorsBooks.AuthorID
+		  where
+            Books.ISBN =  @ISBN
             `
 
     const connection = await sql.connect(connectionset)
