@@ -2,16 +2,18 @@ doctype html
 html 
   head
     style
-             include ./index.css 
+      include ./index.css 
     title
-   
+
   body
     .container 
-        div
-          img(src=`https://image.bokus.com/images/${Books[0].ISBN}`) 
-        div#text
-            h4 Title: #{Books[0].Title}
-            p Författare: #{Books[0].Author}
-            p Language: #{Books[0].Language}
-            p Price: #{Books[0].Price}
-            p Rating: #{Books[0].Rating}
+      div#main
+        img(src=`https://image.bokus.com/images/${Books[0].ISBN}`) 
+      div#text
+        h4 Title: #{Books[0].Title}
+        p Författare: #{Books[0].Author}
+        p Language: #{Books[0].Language}
+        p Price: #{Books[0].Price}
+        p Rating: #{Books[0].Rating}
+
+        a(href=`http://localhost:3000/`) Back to start 

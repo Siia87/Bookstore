@@ -21,16 +21,28 @@ app.get('/', async (req, res) => {
     const connection = await sql.connect(connectionset)
     const result = await connection.request()
       .query(`
-          select 
-            ISBN,
+         select
+			Books.ISBN,
             Title,
-            FirstName + ' ' + LastName as 'Author',
+			case
+				when count(FirstName) > 1 then min(FirstName + ' ' + LastName) +', m.fl'
+				else min(FirstName + ' ' + LastName)
+			end as 'Author',
             Price
-          from 
-            Books,
-            Authors
+          from
+            Books
+
+			right join AuthorsBooks
+			ON Books.ISBN = AuthorsBooks.ISBN
+			right join Authors
+			ON AuthorsBooks.AuthorID = Authors.ID
+			group by
+			Books.ISBN,
+			Books.Price,
+			Books.Title
             `)
 
+    //res.json(result)
     res.render('index.pug', { Books: result.recordset });
     console.log(query);
 
@@ -50,7 +62,7 @@ app.get('/book/:ISBN', async (req, res) => {
 			      Language.Name as 'Language',
             Price,
 		      	FirstName + ' ' + LastName as 'Author',
-				Rating.Rating
+				    Rating.Rating
 
           from
             Books
@@ -64,7 +76,19 @@ app.get('/book/:ISBN', async (req, res) => {
 	  	  Join Authors
           ON Authors.ID = AuthorsBooks.AuthorID
 		  where
-            Books.ISBN =  @ISBN
+            Books.ISBN =  @ISBN;
+          
+    select
+      Name,
+      isnull((
+        Select
+          Quantity
+        from
+          Stock
+        Where StoreID = StoreFronts.ID and ISBN = 9780008264444
+      ),0) as 'Stock'
+
+from  StoreFronts
             `
 
     const connection = await sql.connect(connectionset)
@@ -74,7 +98,7 @@ app.get('/book/:ISBN', async (req, res) => {
     //res.send(req.params.ISBN)
     //res.json(result)
 
-    res.render('book.pug', { Books: result.recordset });
+    res.render('book.pug', { Books: result.recordsets[0], Stores: result.recordsets[1] });
     console.log(query);
   }
   catch (ex) {
