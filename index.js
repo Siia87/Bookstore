@@ -2,7 +2,6 @@ const express = require('express')
 const sql = require('mssql')
 const pug = require('pug')
 
-require('dotenv').config()
 
 const app = express()
 
