@@ -56,39 +56,58 @@ app.get('/', async (req, res) => {
 app.get('/book/:ISBN', async (req, res) => {
   try {
     const query = `
-     select
-            Books.ISBN,
-            Title,
-			      Language.Name as 'Language',
-            Price,
-		      	FirstName + ' ' + LastName as 'Author',
-				    Rating.Rating
-
+ select
+        Books.ISBN,
+        Title,
+			  Language.Name as 'Language',
+        Price,
+			case
+				when count(FirstName) > 1 then string_agg(FirstName + ' ' + LastName, ', ' )
+				else min(FirstName + ' ' + LastName)
+			end as 'Author',
+			Rating.Rating,
+			StoreFronts.[Name],
+			Stock.Quantity
           from
             Books
 
-		join Rating
+			join Stock
+			ON Books.ISBN = Stock.ISBN
+			join StoreFronts
+			ON Stock.StoreID = StoreFronts.ID
+			join Rating
 			ON Books.RatingID = Rating.ID
-        join language
-          ON Books.languageID = language.[639-1]
-	  	  Join AuthorsBooks
-          ON Books.ISBN = AuthorsBooks.ISBN
-	  	  Join Authors
-          ON Authors.ID = AuthorsBooks.AuthorID
-		  where
-            Books.ISBN =  @ISBN;
-          
-    select
-      Name,
-      isnull((
-        Select
-          Quantity
-        from
-          Stock
-        Where StoreID = StoreFronts.ID and ISBN = 9780008264444
-      ),0) as 'Stock'
+			join language
+			ON Books.languageID = language.[639-1]
+	  		Join AuthorsBooks
+			ON Books.ISBN = AuthorsBooks.ISBN
+	  		Join Authors
+			ON Authors.ID = AuthorsBooks.AuthorID
 
-from  StoreFronts
+		 where
+         Books.ISBN =  @ISBN
+		 group by
+		 Books.Title,
+		 Language.Name,
+		 Books.Price,
+		 Rating.Rating,
+		 StoreFronts.Name,
+		 Stock.Quantity,
+     Books.ISBN
+        ;
+
+      select
+        Name as 'Store',
+        isnull((
+          Select
+            Quantity
+          from
+            Stock
+          Where StoreID = StoreFronts.ID and ISBN = @ISBN
+        ),0) as 'Stock'
+
+      from  StoreFronts
+
             `
 
     const connection = await sql.connect(connectionset)

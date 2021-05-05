@@ -1,21 +1,65 @@
 img {
   width: 200px;
   height: 300px;
+  border-radius: 15px;
+  margin-right: 20px;
 }
+
 body{
-    background: blue;
-    color: pink;
+    background: #e0e5eb;
+    color: rgb(24, 22, 22);
+   font-family: 'Open Sans', sans-serif;
 }
-main {
-  background: #eee;
-  max-width: 900px;
-  margin: 30px auto;
+
+#main{
+  float: left;
+}
+
+.container{
+  margin: auto;
+  background: #a3b3c9;
+  max-width: 550px;
+  height: 350px;
+  padding: 20px, 20px, 20px, 20px;
+  border-radius: 15px;
+  border: 1px solid rgba(0, 0, 0, 0.199);
+  box-shadow: 6px 7px 19px 2px rgba(0,0,0,0.23);
+}
+
+.book{
   padding: 20px;
-  border-radius: 50px;
+}
+
+#text{
+font-size: 18px;
+}
+
+#stock {
+  display: flex;
+  margin-top: 50px;
+  justify-content: center;
+  font-size: 20px;
 
 }
 
-
-p {
-  margin-bottom: 0.8em;
+a{
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
 }
+
+.container1{
+  margin-top: 30px;
+  margin-left: 80px;
+  margin-right:80px;
+  border-radius: 15px;
+  padding-bottom: 30px;
+}
+
+h1 {
+  text-align: center;
+  padding-top: 15px;
+  color: #7b91af;
+}
+
+ 

@@ -7,13 +7,25 @@ html
 
   body
     .container 
-      div#main
-        img(src=`https://image.bokus.com/images/${Books[0].ISBN}`) 
-      div#text
-        h4 Title: #{Books[0].Title}
-        p Författare: #{Books[0].Author}
-        p Language: #{Books[0].Language}
-        p Price: #{Books[0].Price}
-        p Rating: #{Books[0].Rating}
+      div.book
+        div#main
+          img(src=`https://image.bokus.com/images/${Books[0].ISBN}`) 
+        div#text
+          h3 #{Books[0].Title}
+          p Författare: #{Books[0].Author}
+          p Language: #{Books[0].Language}
+          p Price: #{Books[0].Price}
+          p Rating: #{Books[0].Rating}
 
-        a(href=`http://localhost:3000/`) Back to start 
+    div#stock
+      table
+        thead 
+          tr
+            each value, key in Stores [0]
+              td= key
+        tbody
+          each store in Stores 
+            tr
+              each value in store 
+                td#style= value 
+    a(href=`http://localhost:3000/`) Back to start 
